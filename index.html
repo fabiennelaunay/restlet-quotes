@@ -1,0 +1,233 @@
+<!doctype html>
+<html ng-app="quotesApp">
+<head>
+  <link rel="stylesheet" href="quote.css">
+  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/icon?family=Material+Icons"
+        media="screen,projection">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<body class="blue-grey lighten-2" ng-cloak>
+
+<div class="container">
+
+  <div class="row"
+       ng-controller="QuoteController">
+
+    <div id="quoteDataContainer" class="col s12 m9 l10">
+      <h1 class="white-text">Stock Quotes</h1>
+
+      <p class="flow-text white-text">A dashboard to monitor stock quotes from Google Finances.</p>
+
+      <div>
+
+        <ul class="collapsible popout" data-collapsible="accordion">
+          <li>
+            <div class="collapsible-header"><i class="material-icons">settings</i>Settings</div>
+            <div class="collapsible-body white">
+
+              <div class="container">
+                <div class="row">
+                  <div class="col s12 m6">
+
+                    <table>
+                      <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th></th>
+                      </tr>
+                      </thead>
+
+                      <tbody>
+                      <tr ng-repeat="quote in quotes">
+                        <td>{{ quote.id }}</td>
+                        <td>
+
+                          <div class="switch">
+                            <label>
+                              Off
+                              <input type="checkbox" ng-model="quoteSelection[quote.id]">
+                              <span class="lever"></span>
+                              On
+                            </label>
+                          </div>
+
+                        </td>
+                      </tr>
+                      </tbody>
+                    </table>
+
+                  </div>
+                  <div class="col s12 m6">
+
+                    <table ng-if="quotes.length" ng-init="refQuote = quotes[0]">
+                      <thead>
+                      <tr>
+                        <th>Attributes</th>
+                        <th></th>
+                      </tr>
+                      </thead>
+
+                      <tbody>
+                      <tr ng-repeat="key in getKeys(refQuote)">
+                        <td>{{ key }}</td>
+                        <td>
+
+                          <div class="switch">
+                            <label>
+                              Off
+                              <input type="checkbox" ng-model="keySelection[key]">
+                              <span class="lever"></span>
+                              On
+                            </label>
+                          </div>
+
+                        </td>
+                      </tr>
+                      </tbody>
+                    </table>
+
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </li>
+        </ul>
+
+        <div id="quotesTableContainer" style="overflow:scroll; margin-bottom: 35px;">
+
+          <table ng-if="quotes.length" ng-init="refQuote = quotes[0]"
+                 class="striped animate-if"
+                 style="background-color: white">
+            <thead>
+            <tr>
+              <th ng-repeat="key in getKeys(refQuote)"
+                  ng-if="keySelection[key]"
+                  data-field="key"
+                  style="text-align: right;">
+                {{ key }}
+              </th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr ng-repeat="quote in quotes"
+                ng-if="quoteSelection[quote.id]">
+
+              <td ng-repeat="key in getKeys(refQuote)"
+                  ng-if="keySelection[key]"
+                  style="text-align: right;"
+                  ng-class="{ 'bg-up': 'green',
+              'bg-down': 'red',
+              'font-up': 'green-text text-darken-2',
+              'font-down': 'red-text text-darken-2',
+              }[quoteState[quote.id][key]]">
+                {{ quote[key] }}
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+
+        <div ng-repeat="quote in quotes"
+             ng-show="quoteSelection[quote.id]"
+             class="animate-show">
+
+          <div class="divider"></div>
+          <div id="section-{{ quote.id }}"
+               class="section scrollspy white-text">
+            <h5>{{ quote.id }}</h5>
+          </div>
+
+          <div class="row">
+            <div class="col s12 m6">
+              <div class="card-panel">
+                <div id="price-chart-{{ quote.id }}"></div>
+              </div>
+            </div>
+            <div class="col s12 m6">
+              <div class="card-panel">
+                <div id="volume-chart-{{ quote.id }}"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col hide-on-small-only m3 l2">
+      <div class="pinned">
+        <ul class="section table-of-contents"
+            ng-show="quotes.length">
+          <li>
+            <a ng-click="goToTop()"
+               style="cursor: pointer"
+               class="white-text">Top</a>
+          </li>
+          <li ng-repeat="quote in quotes"
+              ng-show="quoteSelection[quote.id]">
+            <a href="#section-{{ quote.id }}"
+               class="white-text">
+              {{ quote.id }}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<footer class="page-footer blue-grey lighten-1">
+  <div class="container">
+    <div class="row">
+      <div class="col s6">
+        <h5 class="white-text">About</h5>
+
+        <p class="grey-text text-lighten-4">This service is built on top of APISpark, Streamdata.io,
+          Google Sheets and Google Finance.</p>
+
+        <p class="grey-text text-lighten-4">Also the dashboard is built with MaterializeCSS, HighCharts and
+          AngularJS, hosted on GitHub.</p>
+
+        <p class="grey-text text-lighten-4"><i class="material-icons">mood</i></p>
+
+      </div>
+      <div class="col s4 offset-l2">
+        <h5 class="white-text">Links</h5>
+        <ul>
+          <li><a class="grey-text text-lighten-3" href="http://restlet.com/">APISpark</a></li>
+          <li><a class="grey-text text-lighten-3" href="http://streamdata.io/">Streamdata.io</a></li>
+          <li><a class="grey-text text-lighten-3" href="https://www.google.com/sheets/about/">Google Sheets</a></li>
+          <li><a class="grey-text text-lighten-3" href="https://www.google.com/finance">Google Finance</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-copyright">
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/js/materialize.min.js"></script>
+
+<script src="libs/streamdataio.min.js"></script>
+<script src="libs/highcharts.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.6/angular.min.js"></script>
+<script src="js/app.js"></script>
+<script src="js/chartHelper.js"></script>
+<script src="js/quoteHelper.js"></script>
+<script src="js/quoteController.js"></script>
+
+</body>
+</html>
