@@ -28,7 +28,7 @@ angular.module('quotesApp')
     ctrl.QUOTE_LS = 'quoteSelection';
     ctrl.KEY_LS = 'keySelection';
 
-    var myEventSource = streamdataio.createEventSource('TODO: Add APISpark API URL', STREAMDATAIO_KEY);
+    var myEventSource = streamdataio.createEventSource('https://flamyquotes.apispark.net/v1/quotes/', STREAMDATAIO_KEY);
 
     myEventSource
       .onData(ctrl.onData)
