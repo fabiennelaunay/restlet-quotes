@@ -2,8 +2,9 @@
 
 The demo is a dashboard that monitors the data of Google Finance through a real-time API.
 
-[>> Here it is <<](http://pgu.github.io/quotes/)
-
+- [Demo application](http://fabiennelaunay.github.io/restlet-quotes/)
+- [Screencast](TODO add webcast URL)
+- [Blog post](http://restlet.com/blog/2015/10/28/real-time-stock-quotes-from-google-finance-with-apispark/)
 
 It shows how to integrate the following technologies:
 - [Google Finance](https://www.google.com/finance)
